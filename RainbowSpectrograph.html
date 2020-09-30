@@ -1,0 +1,42 @@
+<canvas width=1024 height=100></canvas>
+<script>
+can = document.getElementsByTagName("canvas")[0]
+c = can.getContext("2d")
+can.onclick=can.requestFullscreen
+freq= new Uint8Array(2048)
+navigator.mediaDevices.getUserMedia({audio:true,video:false}).then(function(auds){audio=auds})
+document.body.onclick = function(){
+aud = new AudioContext()
+ana = aud.createAnalyser()
+med = aud.createMediaStreamSource(audio)
+med.connect(ana)
+med.connect(ana)
+document.body.onclick=function(){}
+setInterval(Animate,10)
+}
+function Animate(){
+  c.fillStyle="#000000"
+  c.fillRect(0,0,can.width,can.height)
+  ana.getByteFrequencyData(freq)
+  for(n=0;n<freq.length;n++){
+
+r=(freq[n]).toString(16)
+if(r.length<2){
+  r="0"+r
+}
+    c.fillStyle = "#"+r+r+r
+    c.fillRect(n,0,1,can.height)
+    c.fill()
+  }
+  hm=c.getImageData(0,0,can.width,can.height)
+for(n=0;n<hm.data.length;n+=4){
+  y=Math.floor((n/4)/can.width)
+  x=(n/4)-(can.width*y)
+  hm.data[n]=Math.cos(x/200)*hm.data[n]*2.2
+  hm.data[n+1]=Math.sin(x/250)*hm.data[n+1]*2.2
+  hm.data[n+2]=-Math.cos(x/250)*hm.data[n+2]*2.2
+}
+c.putImageData(hm,0,0)
+}
+document.getElementsByTagName("script")[0].innerHTML=""
+</script>
